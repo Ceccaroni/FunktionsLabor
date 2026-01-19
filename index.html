@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Funktions-Labor | 9. Klasse</title>
+    <style>
+        :root {
+            --primary-color: #007AFF; /* b: Blau */
+            --secondary-color: #FF3B30; /* a: Rot */
+            --bg-color: #F2F2F7;
+            --card-bg: #FFFFFF;
+            --text-color: #1C1C1E;
+            --grid-line: #E5E5EA;
+            --calc-bg: #FFF4F4;
+            --nav-height: 50px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0; /* Padding wird im Content-Wrapper geregelt */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            touch-action: manipulation;
+        }
+
+        /* --- NAVIGATION & MENU --- */
+        nav {
+            width: 100%;
+            height: var(--nav-height);
+            background: #fff;
+            border-bottom: 1px solid #d1d1d6;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            box-sizing: border-box;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            justify-content: space-between;
+        }
+
+        .burger-btn {
+            font-size: 1.5rem;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 5px;
+        }
+
+        .nav-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        /* Menü Overlay */
+        .menu-overlay {
+            position: fixed;
+            top: var(--nav-height);
+            left: 0;
+            width: 100%;
+            height: calc(100vh - var(--nav-height));
+            background: rgba(0,0,0,0.5);
+            display: none; /* Default hidden */
+            z-index: 99;
+        }
+        .menu-overlay.open { display: block; }
+
+        .menu-content {
+            background: #fff;
+            width: 250px;
+            height: 100%;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .menu-item {
+            padding: 15px;
+            font-size: 1.1rem;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .menu-item:active { background-color: #f2f2f7; }
+        .menu-item.active-mode { font-weight: bold; color: var(--primary-color); }
+
+        /* --- MAIN LAYOUT --- */
+        .content-wrapper {
+            padding: 15px;
+            width: 100%;
+            max-width: 900px;
+            box-sizing: border-box;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            width: 100%;
+        }
+
+        @media (min-width: 850px) {
+            .dashboard {
+                grid-template-columns: 2fr 1fr;
+                grid-template-areas: 
+                    "controls controls"
+                    "equation equation"
+                    "graph table"
+                    "calc calc";
+            }
+            .controls-wrapper { grid-area: controls; }
+            .equation-box { grid-area: equation; }
+            .canvas-container { grid-area: graph; }
+            .table-container { grid-area: table; }
+            .calc-container { grid-area: calc; }
+        }
+
+        /* --- CARDS --- */
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        /* 1. GLEICHUNG */
+        .equation-box {
+            text-align: center; font-size: 1.8rem; font-weight: bold; letter-spacing: 1px;
+        }
+        .var-a { color: var(--secondary-color); }
+        .var-b { color: var(--primary-color); }
+
+        /* 2. CONTROLS (SWITCHABLE) */
+        .controls-wrapper { min-height: 80px; }
+        
+        /* Modus A: Slider */
+        #mode-slider { display: flex; flex-direction: column; gap: 15px; }
+        .slider-group { display: flex; align-items: center; justify-content: space-between; }
+        .slider-label { width: 40px; font-weight: bold; font-size: 1.1rem; }
+        input[type=range] { -webkit-appearance: none; width: 100%; margin: 0 10px; background: transparent; }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none; height: 28px; width: 28px; border-radius: 50%;
+            background: #ffffff; border: 2px solid #8e8e93; cursor: pointer; margin-top: -12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; background: #d1d1d6; border-radius: 2px; }
+        #slider-a::-webkit-slider-thumb { border-color: var(--secondary-color); }
+        #slider-b::-webkit-slider-thumb { border-color: var(--primary-color); }
+        .value-display { width: 45px; text-align: right; font-family: monospace; font-size: 1.1rem; }
+
+        /* Modus B: Inputs */
+        #mode-input { display: none; /* hidden by default */ flex-direction: row; justify-content: space-around; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .input-group { display: flex; align-items: center; gap: 10px; }
+        .number-input {
+            width: 80px; padding: 10px; font-size: 1.2rem; border: 1px solid #d1d1d6;
+            border-radius: 8px; text-align: center; font-family: monospace;
+            background: #f9f9f9;
+        }
+        .number-input:focus { outline: none; border-color: #007AFF; background: #fff; }
+        .input-label { font-weight: bold; font-size: 1.2rem; }
+
+        /* 3. GRAPH & 4. TABLE (Shared Styles) */
+        .canvas-container { position: relative; width: 100%; height: 320px; touch-action: none; }
+        canvas { width: 100%; height: 100%; border-radius: 8px; border: 1px solid var(--grid-line); }
+        
+        .table-container { overflow-y: auto; max-height: 320px; }
+        table { width: 100%; border-collapse: collapse; text-align: center; }
+        th { background-color: #f2f2f7; padding: 8px; position: sticky; top: 0; }
+        td { padding: 8px; border-bottom: 1px solid var(--grid-line); }
+        tr:nth-child(even) { background-color: #fafafa; }
+        tr.highlight-row { background-color: rgba(0, 122, 255, 0.1); font-weight: bold; }
+
+        /* 5. CALCULATION */
+        .calc-container { background-color: #ffffff; border: 1px solid #ff3b3033; }
+        .calc-title { font-size: 1rem; font-weight: bold; color: var(--secondary-color); margin-bottom: 10px; text-transform: uppercase; }
+        .calc-content { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 15px; font-size: 1.1rem; }
+        .fraction { display: inline-block; vertical-align: middle; margin: 0 0.2rem; text-align: center; }
+        .fraction > span { display: block; padding: 0.1em; }
+        .fraction span.numerator { border-bottom: 2px solid var(--text-color); }
+        .symbol { font-size: 1.5rem; vertical-align: middle; color: #8e8e93; }
+        .highlight-delta { color: var(--secondary-color); font-weight: bold; }
+        .explanation-text { font-size: 0.9rem; color: #666; margin-top: 10px; text-align: center; border-top: 1px solid #eee; padding-top: 8px; width: 100%; }
+
+    </style>
+</head>
+<body>
+
+    <nav>
+        <button class="burger-btn" onclick="toggleMenu()">☰</button>
+        <div class="nav-title">Funktions-Labor</div>
+        <div style="width: 24px;"></div> </nav>
+
+    <div class="menu-overlay" id="menu-overlay" onclick="toggleMenu()">
+        <div class="menu-content" onclick="event.stopPropagation()">
+            <div style="margin-bottom: 20px; font-weight: bold; color:#8e8e93;">Modus wählen</div>
+            
+            <div class="menu-item active-mode" id="btn-mode-slider" onclick="switchMode('slider')">
+                <span>🎚</span> Entdecker (Regler)
+            </div>
+            <div class="menu-item" id="btn-mode-input" onclick="switchMode('input')">
+                <span>⌨️</span> Profi (Eingabe)
+            </div>
+        </div>
+    </div>
+
+    <div class="content-wrapper">
+        <div class="dashboard">
+
+            <div class="card controls-wrapper">
+                
+                <div id="mode-slider">
+                    <div class="slider-group">
+                        <span class="slider-label var-a">a</span>
+                        <input type="range" id="slider-a" min="-5" max="5" step="0.5" value="1">
+                        <span class="value-display var-a" id="val-a-disp">1.0</span>
+                    </div>
+                    <div class="slider-group">
+                        <span class="slider-label var-b">b</span>
+                        <input type="range" id="slider-b" min="-5" max="5" step="0.5" value="0">
+                        <span class="value-display var-b" id="val-b-disp">0.0</span>
+                    </div>
+                </div>
+
+                <div id="mode-input">
+                    <div class="input-group">
+                        <span class="input-label var-a">a =</span>
+                        <input type="number" id="input-a" class="number-input" value="1" step="0.1" placeholder="Steigung">
+                    </div>
+                    <div class="input-group">
+                        <span class="input-label var-b">b =</span>
+                        <input type="number" id="input-b" class="number-input" value="0" step="0.5" placeholder="Start">
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="card equation-box">
+                y = <span id="eq-a" class="var-a">1</span>x <span id="eq-sign">+</span> <span id="eq-b" class="var-b">0</span>
+            </div>
+
+            <div class="card canvas-container">
+                <canvas id="graphCanvas"></canvas>
+            </div>
+
+            <div class="card table-container">
+                <table>
+                    <thead><tr><th>x</th><th>y</th></tr></thead>
+                    <tbody id="value-table"></tbody>
+                </table>
+            </div>
+
+            <div class="card calc-container">
+                <div class="calc-title">Steigungsberechnung</div>
+                <div class="calc-content">
+                    <div>a = </div>
+                    <div class="fraction">
+                        <span class="numerator">Höhe (<span style="font-style:italic">dy</span>)</span>
+                        <span class="denominator">Weite (<span style="font-style:italic">dx</span>)</span>
+                    </div>
+                    <div class="symbol">=</div>
+                    <div class="fraction">
+                        <span class="numerator highlight-delta" id="calc-dy">1.0</span>
+                        <span class="denominator">1.0</span>
+                    </div>
+                    <div class="symbol">=</div>
+                    <div class="highlight-delta" id="calc-result" style="font-size: 1.4rem;">1.0</div>
+                </div>
+                <div class="explanation-text" id="calc-expl">Gehe 1 nach rechts und 1.0 nach oben.</div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // --- GLOBALE VARIABLEN ---
+        let a = 1;
+        let b = 0;
+        let scale = 30; 
+        
+        // --- ELEMENTE ---
+        const sliderDiv = document.getElementById('mode-slider');
+        const inputDiv = document.getElementById('mode-input');
+        
+        const sliderA = document.getElementById('slider-a');
+        const sliderB = document.getElementById('slider-b');
+        const valADisp = document.getElementById('val-a-disp');
+        const valBDisp = document.getElementById('val-b-disp');
+        
+        const inputA = document.getElementById('input-a');
+        const inputB = document.getElementById('input-b');
+
+        // UI Outputs
+        const eqA = document.getElementById('eq-a');
+        const eqB = document.getElementById('eq-b');
+        const eqSign = document.getElementById('eq-sign');
+        const tableBody = document.getElementById('value-table');
+        const calcDy = document.getElementById('calc-dy');
+        const calcResult = document.getElementById('calc-result');
+        const calcExpl = document.getElementById('calc-expl');
+
+        const canvas = document.getElementById('graphCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // --- MENU LOGIK ---
+        function toggleMenu() {
+            const overlay = document.getElementById('menu-overlay');
+            overlay.classList.toggle('open');
+        }
+
+        function switchMode(mode) {
+            // UI Toggle
+            const btnSlider = document.getElementById('btn-mode-slider');
+            const btnInput = document.getElementById('btn-mode-input');
+            
+            if (mode === 'slider') {
+                sliderDiv.style.display = 'flex';
+                inputDiv.style.display = 'none';
+                btnSlider.classList.add('active-mode');
+                btnInput.classList.remove('active-mode');
+                
+                // Sync Values: Input -> Slider
+                // (Clamp Werte, falls Input ausserhalb von -5/+5 war, oder Slider erweitern. Hier Clamp für UI Konsistenz)
+                sliderA.value = Math.max(-5, Math.min(5, a));
+                sliderB.value = Math.max(-5, Math.min(5, b));
+                updateFromSlider(); 
+            } else {
+                sliderDiv.style.display = 'none';
+                inputDiv.style.display = 'flex';
+                btnInput.classList.add('active-mode');
+                btnSlider.classList.remove('active-mode');
+                
+                // Sync Values: Slider -> Input
+                inputA.value = a;
+                inputB.value = b;
+            }
+            toggleMenu(); // Menü schließen
+        }
+
+        // --- UPDATE FUNKTIONEN ---
+        
+        // 1. Aufruf durch Slider
+        function updateFromSlider() {
+            a = parseFloat(sliderA.value);
+            b = parseFloat(sliderB.value);
+            
+            valADisp.textContent = a.toFixed(1);
+            valBDisp.textContent = b.toFixed(1);
+            
+            updateVisuals();
+        }
+
+        // 2. Aufruf durch Inputs
+        function updateFromInput() {
+            const valA = parseFloat(inputA.value);
+            const valB = parseFloat(inputB.value);
+            
+            // NaN Check (falls leeres Feld)
+            if (!isNaN(valA)) a = valA;
+            if (!isNaN(valB)) b = valB;
+            
+            updateVisuals();
+        }
+
+        // 3. Zentrale Update Routine für Graph/Text
+        function updateVisuals() {
+            // Gleichung
+            eqA.textContent = a;
+            eqB.textContent = Math.abs(b);
+            eqSign.textContent = b >= 0 ? "+" : "-";
+
+            // Berechnung
+            calcDy.textContent = a.toFixed(1);
+            calcResult.textContent = a.toFixed(1);
+            
+            let direction = "oben";
+            if (a < 0) direction = "unten";
+            if (a === 0) direction = "oben/unten";
+            calcExpl.textContent = `Gehe 1 nach rechts und ${Math.abs(a).toFixed(1)} nach ${direction}.`;
+
+            draw();
+            updateTable();
+        }
+
+        // --- GRAPH LOGIK ---
+        function resizeCanvas() {
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            ctx.scale(dpr, dpr);
+            canvas.logicalWidth = rect.width;
+            canvas.logicalHeight = rect.height;
+            draw();
+        }
+
+        function draw() {
+            const w = canvas.logicalWidth;
+            const h = canvas.logicalHeight;
+            const cx = w / 2;
+            const cy = h / 2;
+
+            ctx.clearRect(0, 0, w, h);
+
+            // Grid
+            ctx.beginPath();
+            ctx.strokeStyle = '#E5E5EA';
+            ctx.lineWidth = 1;
+            for (let x = cx % scale; x < w; x += scale) { ctx.moveTo(x, 0); ctx.lineTo(x, h); }
+            for (let y = cy % scale; y < h; y += scale) { ctx.moveTo(0, y); ctx.lineTo(w, y); }
+            ctx.stroke();
+
+            // Achsen
+            ctx.beginPath();
+            ctx.strokeStyle = '#3A3A3C';
+            ctx.lineWidth = 2;
+            ctx.moveTo(0, cy); ctx.lineTo(w, cy);
+            ctx.moveTo(cx, 0); ctx.lineTo(cx, h);
+            ctx.stroke();
+            
+            ctx.font = '12px Arial';
+            ctx.fillStyle = '#3A3A3C';
+            ctx.fillText('x', w - 15, cy + 15);
+            ctx.fillText('y', cx + 10, 15);
+
+            // Gerade
+            ctx.beginPath();
+            ctx.strokeStyle = '#007AFF';
+            ctx.lineWidth = 3;
+            
+            const xMinMath = (0 - cx) / scale;
+            const xMaxMath = (w - cx) / scale;
+            const yStartPix = cy - (a * xMinMath + b) * scale;
+            const yEndPix = cy - (a * xMaxMath + b) * scale;
+
+            ctx.moveTo(0, yStartPix);
+            ctx.lineTo(w, yEndPix);
+            ctx.stroke();
+
+            // Steigungsdreieck (Nur anzeigen wenn im Bildbereich)
+            if (Math.abs(a) > 0) {
+                // Versuche Dreieck bei x=0 zu zeichnen, oder verschiebe es in den sichtbaren Bereich
+                // Einfachheitshalber: Immer bei x=0 ansetzen
+                const startX = 0; 
+                const startY = b;
+                
+                const p1x = cx + startX * scale;
+                const p1y = cy - startY * scale;
+                const p2x = cx + (startX + 1) * scale;
+                const p2y = p1y;
+                const p3x = p2x;
+                const p3y = cy - (startY + a) * scale;
+
+                // Nur zeichnen wenn halbwegs auf Screen
+                if(p1y > -100 && p3y < h + 100) {
+                    ctx.beginPath();
+                    ctx.strokeStyle = '#FF3B30';
+                    ctx.lineWidth = 2;
+                    ctx.setLineDash([5, 3]);
+                    ctx.moveTo(p1x, p1y);
+                    ctx.lineTo(p2x, p2y);
+                    ctx.lineTo(p3x, p3y);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+            }
+        }
+
+        function updateTable() {
+            tableBody.innerHTML = "";
+            for (let x = -2; x <= 2; x++) {
+                const y = Math.round((a * x + b) * 100) / 100;
+                const row = document.createElement('tr');
+                if (x === 0) row.classList.add('highlight-row');
+                
+                const cellX = document.createElement('td');
+                cellX.textContent = x;
+                const cellY = document.createElement('td');
+                cellY.textContent = y;
+
+                row.appendChild(cellX);
+                row.appendChild(cellY);
+                tableBody.appendChild(row);
+            }
+        }
+
+        // Listener
+        sliderA.addEventListener('input', updateFromSlider);
+        sliderB.addEventListener('input', updateFromSlider);
+        
+        inputA.addEventListener('input', updateFromInput);
+        inputB.addEventListener('input', updateFromInput);
+        
+        window.addEventListener('resize', resizeCanvas);
+
+        // Start
+        resizeCanvas();
+        updateFromSlider(); // Init mit Default Werten
+
+    </script>
+</body>
+</html>
