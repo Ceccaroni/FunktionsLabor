@@ -14,18 +14,15 @@
             --grid-line: #E5E5EA;
             --nav-height: 50px;
             --input-bg: #F0F0F5;
-            --highlight: #34C759; /* Grün für User-Input Zeile */
+            --highlight: #34C759; /* Grün für Live-Punkt */
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            margin: 0; padding: 0;
+            display: flex; flex-direction: column; align-items: center;
             touch-action: manipulation;
         }
 
@@ -37,6 +34,7 @@
             justify-content: space-between;
         }
         .burger-btn { font-size: 1.5rem; cursor: pointer; background: none; border: none; padding: 5px; }
+        .reset-btn { font-size: 1.2rem; cursor: pointer; background: none; border: none; padding: 5px; color: var(--text-color); }
         .nav-title { font-weight: 600; font-size: 1.1rem; }
 
         /* MENU OVERLAY */
@@ -53,7 +51,6 @@
             padding: 15px; font-size: 1.1rem; border-bottom: 1px solid #eee; cursor: pointer;
             display: flex; align-items: center; gap: 10px;
         }
-        .menu-item:active { background-color: #f2f2f7; }
         .menu-item.active-mode { font-weight: bold; color: var(--primary-color); }
 
         /* --- LAYOUT --- */
@@ -63,11 +60,7 @@
         @media (min-width: 850px) {
             .dashboard {
                 grid-template-columns: 2fr 1fr;
-                grid-template-areas: 
-                    "controls controls"
-                    "equation equation"
-                    "graph table"
-                    "calc calc";
+                grid-template-areas: "controls controls" "equation equation" "graph table" "calc calc";
             }
             .controls-wrapper { grid-area: controls; }
             .equation-box { grid-area: equation; }
@@ -76,7 +69,6 @@
             .calc-container { grid-area: calc; }
         }
 
-        /* --- CARDS --- */
         .card { background: var(--card-bg); border-radius: 12px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
 
         /* 1. GLEICHUNG */
@@ -86,8 +78,6 @@
 
         /* 2. CONTROLS */
         .controls-wrapper { min-height: 80px; }
-        
-        /* Modus Slider */
         #mode-slider { display: flex; flex-direction: column; gap: 15px; }
         .slider-group { display: flex; align-items: center; justify-content: space-between; }
         .slider-label { width: 40px; font-weight: bold; font-size: 1.1rem; }
@@ -102,21 +92,19 @@
         #slider-b::-webkit-slider-thumb { border-color: var(--primary-color); }
         .value-display { width: 55px; text-align: right; font-family: monospace; font-size: 1.1rem; }
 
-        /* Modus Input */
         #mode-input { display: none; flex-direction: row; justify-content: space-around; align-items: center; gap: 10px; flex-wrap: wrap; }
         .input-group { display: flex; align-items: center; gap: 10px; }
         .number-input {
             width: 90px; padding: 10px; font-size: 1.2rem; border: 1px solid #d1d1d6;
             border-radius: 8px; text-align: center; font-family: monospace; background: var(--input-bg);
         }
-        .number-input:focus { outline: none; border-color: #007AFF; background: #fff; }
         .input-label { font-weight: bold; font-size: 1.2rem; }
 
         /* 3. GRAPH */
         .canvas-container { position: relative; width: 100%; height: 340px; touch-action: none; }
         canvas { width: 100%; height: 100%; border-radius: 8px; border: 1px solid var(--grid-line); }
         
-        /* 4. TABLE & CALCULATOR ROW */
+        /* 4. TABLE & LIVE CALC */
         .table-container { overflow-y: auto; max-height: 340px; display: flex; flex-direction: column; }
         table { width: 100%; border-collapse: collapse; text-align: center; margin-bottom: 10px; }
         th { background-color: #f2f2f7; padding: 8px; position: sticky; top: 0; z-index: 10; }
@@ -124,29 +112,15 @@
         tr:nth-child(even) { background-color: #fafafa; }
         tr.highlight-row { background-color: rgba(0, 122, 255, 0.1); font-weight: bold; }
 
-        /* LIVE RECHNER ROW STYLE */
-        .calc-row-container {
-            border-top: 2px solid var(--grid-line);
-            padding-top: 10px;
-            background: #fff;
-        }
-        .calc-row-label {
-            font-size: 0.8rem; text-transform: uppercase; color: #8e8e93; font-weight: bold; 
-            text-align: center; margin-bottom: 5px;
-        }
-        .calc-inputs {
-            display: flex; justify-content: space-around; align-items: center;
-        }
-        .calc-cell {
-            display: flex; flex-direction: column; align-items: center; width: 45%;
-        }
+        .calc-row-container { border-top: 2px solid var(--grid-line); padding-top: 10px; background: #fff; }
+        .calc-row-label { font-size: 0.8rem; text-transform: uppercase; color: #8e8e93; font-weight: bold; text-align: center; margin-bottom: 5px; }
+        .calc-inputs { display: flex; justify-content: space-around; align-items: center; }
+        .calc-cell { display: flex; flex-direction: column; align-items: center; width: 45%; }
         .mini-label { font-size: 0.9rem; color: #666; margin-bottom: 2px; }
         .live-input {
             width: 100%; padding: 8px; font-size: 1.1rem; border: 2px solid var(--highlight);
-            border-radius: 8px; text-align: center; font-family: monospace; color: var(--text-color);
-            background-color: #fafffb;
+            border-radius: 8px; text-align: center; font-family: monospace; color: var(--text-color); background-color: #fafffb;
         }
-        .live-input:focus { outline: none; background-color: #fff; box-shadow: 0 0 0 3px rgba(52, 199, 89, 0.2); }
 
         /* 5. CALCULATION EXPLANATION */
         .calc-container { background-color: #ffffff; border: 1px solid #ff3b3033; }
@@ -164,9 +138,9 @@
 <body>
 
     <nav>
-        <button class="burger-btn" onclick="toggleMenu()">☰</button>
+        <button class="burger-btn" onclick="toggleMenu()" aria-label="Menü">☰</button>
         <div class="nav-title">Funktions-Labor</div>
-        <div style="width: 24px;"></div>
+        <button class="reset-btn" onclick="resetAll()" aria-label="Zurücksetzen">↺ Reset</button>
     </nav>
 
     <div class="menu-overlay" id="menu-overlay" onclick="toggleMenu()">
@@ -224,7 +198,6 @@
                         <tbody id="value-table"></tbody>
                     </table>
                 </div>
-                
                 <div class="calc-row-container">
                     <div class="calc-row-label">Eigener Punkt (Rechner)</div>
                     <div class="calc-inputs">
@@ -286,7 +259,6 @@
         const eqSign = document.getElementById('eq-sign');
         const tableBody = document.getElementById('value-table');
         
-        // Live Calc Inputs
         const liveX = document.getElementById('live-x');
         const liveY = document.getElementById('live-y');
 
@@ -297,119 +269,82 @@
         const ctx = canvas.getContext('2d');
 
         // --- MENU LOGIC ---
-        function toggleMenu() {
-            document.getElementById('menu-overlay').classList.toggle('open');
-        }
+        function toggleMenu() { document.getElementById('menu-overlay').classList.toggle('open'); }
 
         function switchMode(mode) {
             const btnSlider = document.getElementById('btn-mode-slider');
             const btnInput = document.getElementById('btn-mode-input');
             
             if (mode === 'slider') {
-                sliderDiv.style.display = 'flex';
-                inputDiv.style.display = 'none';
-                btnSlider.classList.add('active-mode');
-                btnInput.classList.remove('active-mode');
-                
-                // Sync to closest step
-                sliderA.value = Math.max(-5, Math.min(5, a));
-                sliderB.value = Math.max(-5, Math.min(5, b));
+                sliderDiv.style.display = 'flex'; inputDiv.style.display = 'none';
+                btnSlider.classList.add('active-mode'); btnInput.classList.remove('active-mode');
+                sliderA.value = Math.max(-5, Math.min(5, a)); sliderB.value = Math.max(-5, Math.min(5, b));
                 updateFromSlider(); 
             } else {
-                sliderDiv.style.display = 'none';
-                inputDiv.style.display = 'flex';
-                btnInput.classList.add('active-mode');
-                btnSlider.classList.remove('active-mode');
-                
-                inputA.value = a;
-                inputB.value = b;
+                sliderDiv.style.display = 'none'; inputDiv.style.display = 'flex';
+                btnInput.classList.add('active-mode'); btnSlider.classList.remove('active-mode');
+                inputA.value = a; inputB.value = b;
             }
             toggleMenu();
         }
 
+        function resetAll() {
+            a = 1; b = 0;
+            sliderA.value = 1; sliderB.value = 0;
+            inputA.value = 1; inputB.value = 0;
+            liveX.value = ""; liveY.value = "";
+            switchMode('slider'); // Reset to default view
+        }
+
         // --- UPDATE LOGIC ---
         function updateFromSlider() {
-            a = parseFloat(sliderA.value);
-            b = parseFloat(sliderB.value);
-            valADisp.textContent = a.toFixed(2);
-            valBDisp.textContent = b.toFixed(2);
+            a = parseFloat(sliderA.value); b = parseFloat(sliderB.value);
+            valADisp.textContent = a.toFixed(2); valBDisp.textContent = b.toFixed(2);
             updateVisuals();
         }
 
         function updateFromInput() {
-            const valA = parseFloat(inputA.value);
-            const valB = parseFloat(inputB.value);
-            if (!isNaN(valA)) a = valA;
-            if (!isNaN(valB)) b = valB;
+            const valA = parseFloat(inputA.value); const valB = parseFloat(inputB.value);
+            if (!isNaN(valA)) a = valA; if (!isNaN(valB)) b = valB;
             updateVisuals();
         }
 
         function updateVisuals() {
-            // Equations
             eqA.textContent = Number(a.toFixed(2)); 
             eqB.textContent = Math.abs(Number(b.toFixed(2)));
             eqSign.textContent = b >= 0 ? "+" : "-";
 
-            // Explanations
             calcDy.textContent = a.toFixed(2);
             calcResult.textContent = a.toFixed(2);
             let direction = a < 0 ? "unten" : (a === 0 ? "oben/unten" : "oben");
             calcExpl.textContent = `Gehe 1 nach rechts und ${Math.abs(a).toFixed(2)} nach ${direction}.`;
 
-            // Redraw Graph & Table
             draw();
             updateTable();
-            
-            // Recalculate Live Input if values exist
             recalcLiveFields(); 
         }
 
-        // --- LIVE CALCULATOR LOGIC ---
-        
-        // Scenario 1: User types X -> Calc Y
+        // --- LIVE CALC ---
         liveX.addEventListener('input', () => {
             const valX = parseFloat(liveX.value);
-            if (isNaN(valX)) {
-                liveY.value = "";
-                return;
-            }
-            // y = ax + b
-            const resY = a * valX + b;
-            liveY.value = parseFloat(resY.toFixed(2)); // Remove trailing zeros
+            if (isNaN(valX)) { liveY.value = ""; } 
+            else { liveY.value = parseFloat((a * valX + b).toFixed(2)); }
+            draw(); // Redraw to show point
         });
 
-        // Scenario 2: User types Y -> Calc X
         liveY.addEventListener('input', () => {
             const valY = parseFloat(liveY.value);
-            if (isNaN(valY)) {
-                liveX.value = "";
-                return;
-            }
-            // y = ax + b  =>  x = (y - b) / a
-            if (a === 0) {
-                // Sonderfall waagrechte Gerade
-                if (valY === b) liveX.value = "Alle"; // Alle x möglich
-                else liveX.value = "---"; // Keine Lösung
-            } else {
-                const resX = (valY - b) / a;
-                liveX.value = parseFloat(resX.toFixed(2));
-            }
+            if (isNaN(valY)) { liveX.value = ""; }
+            else if (a === 0) { liveX.value = (valY === b) ? "Alle" : "---"; }
+            else { liveX.value = parseFloat(((valY - b) / a).toFixed(2)); }
+            draw(); // Redraw to show point
         });
 
-        // Update if a/b changes but user hasn't typed
         function recalcLiveFields() {
-            // Priority: If X is filled, recalc Y. 
-            // Only if X is empty and Y is filled, recalc X.
             if (liveX.value !== "") {
-                const valX = parseFloat(liveX.value);
-                const resY = a * valX + b;
-                liveY.value = parseFloat(resY.toFixed(2));
+                liveY.value = parseFloat((a * parseFloat(liveX.value) + b).toFixed(2));
             } else if (liveY.value !== "") {
-                const valY = parseFloat(liveY.value);
-                if (a !== 0) {
-                    const resX = (valY - b) / a;
-                    liveX.value = parseFloat(resX.toFixed(2));
-                }
+                if (a !== 0) liveX.value = parseFloat(((parseFloat(liveY.value) - b) / a).toFixed(2));
             }
         }
 
@@ -417,42 +352,31 @@
         function resizeCanvas() {
             const dpr = window.devicePixelRatio || 1;
             const rect = canvas.getBoundingClientRect();
-            canvas.width = rect.width * dpr;
-            canvas.height = rect.height * dpr;
-            ctx.scale(dpr, dpr);
-            canvas.logicalWidth = rect.width;
-            canvas.logicalHeight = rect.height;
+            canvas.width = rect.width * dpr; canvas.height = rect.height * dpr;
+            ctx.scale(dpr, dpr); canvas.logicalWidth = rect.width; canvas.logicalHeight = rect.height;
             draw();
         }
 
         function draw() {
-            const w = canvas.logicalWidth;
-            const h = canvas.logicalHeight;
-            const cx = w / 2;
-            const cy = h / 2;
-
+            const w = canvas.logicalWidth; const h = canvas.logicalHeight;
+            const cx = w / 2; const cy = h / 2;
             ctx.clearRect(0, 0, w, h);
 
-            // Grid
+            // Grid & Axes
             ctx.beginPath(); ctx.strokeStyle = '#E5E5EA'; ctx.lineWidth = 1;
             for (let x = cx % scale; x < w; x += scale) { ctx.moveTo(x, 0); ctx.lineTo(x, h); }
             for (let y = cy % scale; y < h; y += scale) { ctx.moveTo(0, y); ctx.lineTo(w, y); }
             ctx.stroke();
 
-            // Achsen
             ctx.beginPath(); ctx.strokeStyle = '#3A3A3C'; ctx.lineWidth = 2;
-            ctx.moveTo(0, cy); ctx.lineTo(w, cy);
-            ctx.moveTo(cx, 0); ctx.lineTo(cx, h);
-            ctx.stroke();
-            
+            ctx.moveTo(0, cy); ctx.lineTo(w, cy); ctx.moveTo(cx, 0); ctx.lineTo(cx, h); ctx.stroke();
             ctx.font = '12px Arial'; ctx.fillStyle = '#3A3A3C';
             ctx.fillText('x', w - 15, cy + 15); ctx.fillText('y', cx + 10, 15);
 
-            // Gerade
+            // Function Line
             ctx.beginPath(); ctx.strokeStyle = '#007AFF'; ctx.lineWidth = 3;
             const xMin = (0 - cx) / scale; const xMax = (w - cx) / scale;
-            ctx.moveTo(0, cy - (a * xMin + b) * scale);
-            ctx.lineTo(w, cy - (a * xMax + b) * scale);
+            ctx.moveTo(0, cy - (a * xMin + b) * scale); ctx.lineTo(w, cy - (a * xMax + b) * scale);
             ctx.stroke();
 
             // Steigungsdreieck
@@ -470,6 +394,37 @@
                     ctx.fillText(a.toFixed(2), p2x + 5, (p2y + p3y)/2 + 3);
                 }
             }
+
+            // --- PUNKTE ZEICHNEN ---
+            
+            // 1. y-Achsenabschnitt (Blau) - immer sichtbar
+            drawPoint(0, b, '#007AFF', 5);
+
+            // 2. Live-Punkt (Grün) - wenn Werte vorhanden
+            const lx = parseFloat(liveX.value);
+            const ly = parseFloat(liveY.value);
+            if (!isNaN(lx) && !isNaN(ly)) {
+                drawPoint(lx, ly, '#34C759', 6); // Etwas größer
+            }
+        }
+
+        function drawPoint(mathX, mathY, color, size) {
+            const w = canvas.logicalWidth; const h = canvas.logicalHeight;
+            const cx = w / 2; const cy = h / 2;
+            
+            const px = cx + mathX * scale;
+            const py = cy - mathY * scale;
+
+            // Nur zeichnen wenn im sichtbaren Bereich (mit Buffer)
+            if (px > -10 && px < w + 10 && py > -10 && py < h + 10) {
+                ctx.beginPath();
+                ctx.arc(px, py, size, 0, 2 * Math.PI);
+                ctx.fillStyle = color;
+                ctx.fill();
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
         }
 
         function updateTable() {
@@ -485,7 +440,6 @@
             }
         }
 
-        // Listeners
         sliderA.addEventListener('input', updateFromSlider);
         sliderB.addEventListener('input', updateFromSlider);
         inputA.addEventListener('input', updateFromInput);
@@ -494,7 +448,6 @@
 
         resizeCanvas();
         updateFromSlider(); 
-
     </script>
 </body>
 </html>
