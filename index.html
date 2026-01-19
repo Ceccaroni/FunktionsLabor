@@ -12,8 +12,9 @@
             --card-bg: #FFFFFF;
             --text-color: #1C1C1E;
             --grid-line: #E5E5EA;
-            --calc-bg: #FFF4F4;
             --nav-height: 50px;
+            --input-bg: #F0F0F5;
+            --highlight: #34C759; /* Grün für User-Input Zeile */
         }
 
         body {
@@ -21,91 +22,43 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
-            padding: 0; /* Padding wird im Content-Wrapper geregelt */
+            padding: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
             touch-action: manipulation;
         }
 
-        /* --- NAVIGATION & MENU --- */
+        /* --- NAVIGATION --- */
         nav {
-            width: 100%;
-            height: var(--nav-height);
-            background: #fff;
-            border-bottom: 1px solid #d1d1d6;
-            display: flex;
-            align-items: center;
-            padding: 0 15px;
-            box-sizing: border-box;
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            width: 100%; height: var(--nav-height); background: #fff;
+            border-bottom: 1px solid #d1d1d6; display: flex; align-items: center;
+            padding: 0 15px; box-sizing: border-box; position: sticky; top: 0; z-index: 100;
             justify-content: space-between;
         }
+        .burger-btn { font-size: 1.5rem; cursor: pointer; background: none; border: none; padding: 5px; }
+        .nav-title { font-weight: 600; font-size: 1.1rem; }
 
-        .burger-btn {
-            font-size: 1.5rem;
-            cursor: pointer;
-            background: none;
-            border: none;
-            padding: 5px;
-        }
-
-        .nav-title {
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-
-        /* Menü Overlay */
+        /* MENU OVERLAY */
         .menu-overlay {
-            position: fixed;
-            top: var(--nav-height);
-            left: 0;
-            width: 100%;
-            height: calc(100vh - var(--nav-height));
-            background: rgba(0,0,0,0.5);
-            display: none; /* Default hidden */
-            z-index: 99;
+            position: fixed; top: var(--nav-height); left: 0; width: 100%; height: calc(100vh - var(--nav-height));
+            background: rgba(0,0,0,0.5); display: none; z-index: 99;
         }
         .menu-overlay.open { display: block; }
-
         .menu-content {
-            background: #fff;
-            width: 250px;
-            height: 100%;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
-            padding: 20px;
+            background: #fff; width: 250px; height: 100%; box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            display: flex; flex-direction: column; padding: 20px;
         }
-
         .menu-item {
-            padding: 15px;
-            font-size: 1.1rem;
-            border-bottom: 1px solid #eee;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            padding: 15px; font-size: 1.1rem; border-bottom: 1px solid #eee; cursor: pointer;
+            display: flex; align-items: center; gap: 10px;
         }
         .menu-item:active { background-color: #f2f2f7; }
         .menu-item.active-mode { font-weight: bold; color: var(--primary-color); }
 
-        /* --- MAIN LAYOUT --- */
-        .content-wrapper {
-            padding: 15px;
-            width: 100%;
-            max-width: 900px;
-            box-sizing: border-box;
-        }
-
-        .dashboard {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 15px;
-            width: 100%;
-        }
+        /* --- LAYOUT --- */
+        .content-wrapper { padding: 15px; width: 100%; max-width: 900px; box-sizing: border-box; }
+        .dashboard { display: grid; grid-template-columns: 1fr; gap: 15px; width: 100%; }
 
         @media (min-width: 850px) {
             .dashboard {
@@ -124,24 +77,17 @@
         }
 
         /* --- CARDS --- */
-        .card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 15px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
+        .card { background: var(--card-bg); border-radius: 12px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
 
         /* 1. GLEICHUNG */
-        .equation-box {
-            text-align: center; font-size: 1.8rem; font-weight: bold; letter-spacing: 1px;
-        }
+        .equation-box { text-align: center; font-size: 1.8rem; font-weight: bold; letter-spacing: 1px; }
         .var-a { color: var(--secondary-color); }
         .var-b { color: var(--primary-color); }
 
-        /* 2. CONTROLS (SWITCHABLE) */
+        /* 2. CONTROLS */
         .controls-wrapper { min-height: 80px; }
         
-        /* Modus A: Slider */
+        /* Modus Slider */
         #mode-slider { display: flex; flex-direction: column; gap: 15px; }
         .slider-group { display: flex; align-items: center; justify-content: space-between; }
         .slider-label { width: 40px; font-weight: bold; font-size: 1.1rem; }
@@ -154,37 +100,61 @@
         input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; background: #d1d1d6; border-radius: 2px; }
         #slider-a::-webkit-slider-thumb { border-color: var(--secondary-color); }
         #slider-b::-webkit-slider-thumb { border-color: var(--primary-color); }
-        .value-display { width: 45px; text-align: right; font-family: monospace; font-size: 1.1rem; }
+        .value-display { width: 55px; text-align: right; font-family: monospace; font-size: 1.1rem; }
 
-        /* Modus B: Inputs */
-        #mode-input { display: none; /* hidden by default */ flex-direction: row; justify-content: space-around; align-items: center; gap: 10px; flex-wrap: wrap; }
+        /* Modus Input */
+        #mode-input { display: none; flex-direction: row; justify-content: space-around; align-items: center; gap: 10px; flex-wrap: wrap; }
         .input-group { display: flex; align-items: center; gap: 10px; }
         .number-input {
-            width: 80px; padding: 10px; font-size: 1.2rem; border: 1px solid #d1d1d6;
-            border-radius: 8px; text-align: center; font-family: monospace;
-            background: #f9f9f9;
+            width: 90px; padding: 10px; font-size: 1.2rem; border: 1px solid #d1d1d6;
+            border-radius: 8px; text-align: center; font-family: monospace; background: var(--input-bg);
         }
         .number-input:focus { outline: none; border-color: #007AFF; background: #fff; }
         .input-label { font-weight: bold; font-size: 1.2rem; }
 
-        /* 3. GRAPH & 4. TABLE (Shared Styles) */
-        .canvas-container { position: relative; width: 100%; height: 320px; touch-action: none; }
+        /* 3. GRAPH */
+        .canvas-container { position: relative; width: 100%; height: 340px; touch-action: none; }
         canvas { width: 100%; height: 100%; border-radius: 8px; border: 1px solid var(--grid-line); }
         
-        .table-container { overflow-y: auto; max-height: 320px; }
-        table { width: 100%; border-collapse: collapse; text-align: center; }
-        th { background-color: #f2f2f7; padding: 8px; position: sticky; top: 0; }
+        /* 4. TABLE & CALCULATOR ROW */
+        .table-container { overflow-y: auto; max-height: 340px; display: flex; flex-direction: column; }
+        table { width: 100%; border-collapse: collapse; text-align: center; margin-bottom: 10px; }
+        th { background-color: #f2f2f7; padding: 8px; position: sticky; top: 0; z-index: 10; }
         td { padding: 8px; border-bottom: 1px solid var(--grid-line); }
         tr:nth-child(even) { background-color: #fafafa; }
         tr.highlight-row { background-color: rgba(0, 122, 255, 0.1); font-weight: bold; }
 
-        /* 5. CALCULATION */
+        /* LIVE RECHNER ROW STYLE */
+        .calc-row-container {
+            border-top: 2px solid var(--grid-line);
+            padding-top: 10px;
+            background: #fff;
+        }
+        .calc-row-label {
+            font-size: 0.8rem; text-transform: uppercase; color: #8e8e93; font-weight: bold; 
+            text-align: center; margin-bottom: 5px;
+        }
+        .calc-inputs {
+            display: flex; justify-content: space-around; align-items: center;
+        }
+        .calc-cell {
+            display: flex; flex-direction: column; align-items: center; width: 45%;
+        }
+        .mini-label { font-size: 0.9rem; color: #666; margin-bottom: 2px; }
+        .live-input {
+            width: 100%; padding: 8px; font-size: 1.1rem; border: 2px solid var(--highlight);
+            border-radius: 8px; text-align: center; font-family: monospace; color: var(--text-color);
+            background-color: #fafffb;
+        }
+        .live-input:focus { outline: none; background-color: #fff; box-shadow: 0 0 0 3px rgba(52, 199, 89, 0.2); }
+
+        /* 5. CALCULATION EXPLANATION */
         .calc-container { background-color: #ffffff; border: 1px solid #ff3b3033; }
         .calc-title { font-size: 1rem; font-weight: bold; color: var(--secondary-color); margin-bottom: 10px; text-transform: uppercase; }
         .calc-content { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 15px; font-size: 1.1rem; }
         .fraction { display: inline-block; vertical-align: middle; margin: 0 0.2rem; text-align: center; }
-        .fraction > span { display: block; padding: 0.1em; }
-        .fraction span.numerator { border-bottom: 2px solid var(--text-color); }
+        .fraction span.numerator { border-bottom: 2px solid var(--text-color); display: block; padding: 0.1em; }
+        .fraction span.denominator { display: block; padding: 0.1em; }
         .symbol { font-size: 1.5rem; vertical-align: middle; color: #8e8e93; }
         .highlight-delta { color: var(--secondary-color); font-weight: bold; }
         .explanation-text { font-size: 0.9rem; color: #666; margin-top: 10px; text-align: center; border-top: 1px solid #eee; padding-top: 8px; width: 100%; }
@@ -196,12 +166,12 @@
     <nav>
         <button class="burger-btn" onclick="toggleMenu()">☰</button>
         <div class="nav-title">Funktions-Labor</div>
-        <div style="width: 24px;"></div> </nav>
+        <div style="width: 24px;"></div>
+    </nav>
 
     <div class="menu-overlay" id="menu-overlay" onclick="toggleMenu()">
         <div class="menu-content" onclick="event.stopPropagation()">
             <div style="margin-bottom: 20px; font-weight: bold; color:#8e8e93;">Modus wählen</div>
-            
             <div class="menu-item active-mode" id="btn-mode-slider" onclick="switchMode('slider')">
                 <span>🎚</span> Entdecker (Regler)
             </div>
@@ -215,20 +185,18 @@
         <div class="dashboard">
 
             <div class="card controls-wrapper">
-                
                 <div id="mode-slider">
                     <div class="slider-group">
                         <span class="slider-label var-a">a</span>
                         <input type="range" id="slider-a" min="-5" max="5" step="0.5" value="1">
-                        <span class="value-display var-a" id="val-a-disp">1.0</span>
+                        <span class="value-display var-a" id="val-a-disp">1.00</span>
                     </div>
                     <div class="slider-group">
                         <span class="slider-label var-b">b</span>
                         <input type="range" id="slider-b" min="-5" max="5" step="0.5" value="0">
-                        <span class="value-display var-b" id="val-b-disp">0.0</span>
+                        <span class="value-display var-b" id="val-b-disp">0.00</span>
                     </div>
                 </div>
-
                 <div id="mode-input">
                     <div class="input-group">
                         <span class="input-label var-a">a =</span>
@@ -239,7 +207,6 @@
                         <input type="number" id="input-b" class="number-input" value="0" step="0.5" placeholder="Start">
                     </div>
                 </div>
-
             </div>
 
             <div class="card equation-box">
@@ -251,10 +218,27 @@
             </div>
 
             <div class="card table-container">
-                <table>
-                    <thead><tr><th>x</th><th>y</th></tr></thead>
-                    <tbody id="value-table"></tbody>
-                </table>
+                <div style="flex-grow: 1;">
+                    <table>
+                        <thead><tr><th>x</th><th>y</th></tr></thead>
+                        <tbody id="value-table"></tbody>
+                    </table>
+                </div>
+                
+                <div class="calc-row-container">
+                    <div class="calc-row-label">Eigener Punkt (Rechner)</div>
+                    <div class="calc-inputs">
+                        <div class="calc-cell">
+                            <span class="mini-label">x eingeben</span>
+                            <input type="number" id="live-x" class="live-input" placeholder="?">
+                        </div>
+                        <div style="font-weight:bold; color:#d1d1d6;">⮕</div>
+                        <div class="calc-cell">
+                            <span class="mini-label">y eingeben</span>
+                            <input type="number" id="live-y" class="live-input" placeholder="?">
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="card calc-container">
@@ -267,25 +251,25 @@
                     </div>
                     <div class="symbol">=</div>
                     <div class="fraction">
-                        <span class="numerator highlight-delta" id="calc-dy">1.0</span>
-                        <span class="denominator">1.0</span>
+                        <span class="numerator highlight-delta" id="calc-dy">1.00</span>
+                        <span class="denominator">1</span>
                     </div>
                     <div class="symbol">=</div>
-                    <div class="highlight-delta" id="calc-result" style="font-size: 1.4rem;">1.0</div>
+                    <div class="highlight-delta" id="calc-result" style="font-size: 1.4rem;">1.00</div>
                 </div>
-                <div class="explanation-text" id="calc-expl">Gehe 1 nach rechts und 1.0 nach oben.</div>
+                <div class="explanation-text" id="calc-expl">Gehe 1 nach rechts und 1.00 nach oben.</div>
             </div>
 
         </div>
     </div>
 
     <script>
-        // --- GLOBALE VARIABLEN ---
+        // --- GLOBALS ---
         let a = 1;
         let b = 0;
         let scale = 30; 
         
-        // --- ELEMENTE ---
+        // --- ELEMENTS ---
         const sliderDiv = document.getElementById('mode-slider');
         const inputDiv = document.getElementById('mode-input');
         
@@ -297,26 +281,27 @@
         const inputA = document.getElementById('input-a');
         const inputB = document.getElementById('input-b');
 
-        // UI Outputs
         const eqA = document.getElementById('eq-a');
         const eqB = document.getElementById('eq-b');
         const eqSign = document.getElementById('eq-sign');
         const tableBody = document.getElementById('value-table');
+        
+        // Live Calc Inputs
+        const liveX = document.getElementById('live-x');
+        const liveY = document.getElementById('live-y');
+
         const calcDy = document.getElementById('calc-dy');
         const calcResult = document.getElementById('calc-result');
         const calcExpl = document.getElementById('calc-expl');
-
         const canvas = document.getElementById('graphCanvas');
         const ctx = canvas.getContext('2d');
 
-        // --- MENU LOGIK ---
+        // --- MENU LOGIC ---
         function toggleMenu() {
-            const overlay = document.getElementById('menu-overlay');
-            overlay.classList.toggle('open');
+            document.getElementById('menu-overlay').classList.toggle('open');
         }
 
         function switchMode(mode) {
-            // UI Toggle
             const btnSlider = document.getElementById('btn-mode-slider');
             const btnInput = document.getElementById('btn-mode-input');
             
@@ -326,8 +311,7 @@
                 btnSlider.classList.add('active-mode');
                 btnInput.classList.remove('active-mode');
                 
-                // Sync Values: Input -> Slider
-                // (Clamp Werte, falls Input ausserhalb von -5/+5 war, oder Slider erweitern. Hier Clamp für UI Konsistenz)
+                // Sync to closest step
                 sliderA.value = Math.max(-5, Math.min(5, a));
                 sliderB.value = Math.max(-5, Math.min(5, b));
                 updateFromSlider(); 
@@ -337,59 +321,99 @@
                 btnInput.classList.add('active-mode');
                 btnSlider.classList.remove('active-mode');
                 
-                // Sync Values: Slider -> Input
                 inputA.value = a;
                 inputB.value = b;
             }
-            toggleMenu(); // Menü schließen
+            toggleMenu();
         }
 
-        // --- UPDATE FUNKTIONEN ---
-        
-        // 1. Aufruf durch Slider
+        // --- UPDATE LOGIC ---
         function updateFromSlider() {
             a = parseFloat(sliderA.value);
             b = parseFloat(sliderB.value);
-            
-            valADisp.textContent = a.toFixed(1);
-            valBDisp.textContent = b.toFixed(1);
-            
+            valADisp.textContent = a.toFixed(2);
+            valBDisp.textContent = b.toFixed(2);
             updateVisuals();
         }
 
-        // 2. Aufruf durch Inputs
         function updateFromInput() {
             const valA = parseFloat(inputA.value);
             const valB = parseFloat(inputB.value);
-            
-            // NaN Check (falls leeres Feld)
             if (!isNaN(valA)) a = valA;
             if (!isNaN(valB)) b = valB;
-            
             updateVisuals();
         }
 
-        // 3. Zentrale Update Routine für Graph/Text
         function updateVisuals() {
-            // Gleichung
-            eqA.textContent = a;
-            eqB.textContent = Math.abs(b);
+            // Equations
+            eqA.textContent = Number(a.toFixed(2)); 
+            eqB.textContent = Math.abs(Number(b.toFixed(2)));
             eqSign.textContent = b >= 0 ? "+" : "-";
 
-            // Berechnung
-            calcDy.textContent = a.toFixed(1);
-            calcResult.textContent = a.toFixed(1);
-            
-            let direction = "oben";
-            if (a < 0) direction = "unten";
-            if (a === 0) direction = "oben/unten";
-            calcExpl.textContent = `Gehe 1 nach rechts und ${Math.abs(a).toFixed(1)} nach ${direction}.`;
+            // Explanations
+            calcDy.textContent = a.toFixed(2);
+            calcResult.textContent = a.toFixed(2);
+            let direction = a < 0 ? "unten" : (a === 0 ? "oben/unten" : "oben");
+            calcExpl.textContent = `Gehe 1 nach rechts und ${Math.abs(a).toFixed(2)} nach ${direction}.`;
 
+            // Redraw Graph & Table
             draw();
             updateTable();
+            
+            // Recalculate Live Input if values exist
+            recalcLiveFields(); 
         }
 
-        // --- GRAPH LOGIK ---
+        // --- LIVE CALCULATOR LOGIC ---
+        
+        // Scenario 1: User types X -> Calc Y
+        liveX.addEventListener('input', () => {
+            const valX = parseFloat(liveX.value);
+            if (isNaN(valX)) {
+                liveY.value = "";
+                return;
+            }
+            // y = ax + b
+            const resY = a * valX + b;
+            liveY.value = parseFloat(resY.toFixed(2)); // Remove trailing zeros
+        });
+
+        // Scenario 2: User types Y -> Calc X
+        liveY.addEventListener('input', () => {
+            const valY = parseFloat(liveY.value);
+            if (isNaN(valY)) {
+                liveX.value = "";
+                return;
+            }
+            // y = ax + b  =>  x = (y - b) / a
+            if (a === 0) {
+                // Sonderfall waagrechte Gerade
+                if (valY === b) liveX.value = "Alle"; // Alle x möglich
+                else liveX.value = "---"; // Keine Lösung
+            } else {
+                const resX = (valY - b) / a;
+                liveX.value = parseFloat(resX.toFixed(2));
+            }
+        });
+
+        // Update if a/b changes but user hasn't typed
+        function recalcLiveFields() {
+            // Priority: If X is filled, recalc Y. 
+            // Only if X is empty and Y is filled, recalc X.
+            if (liveX.value !== "") {
+                const valX = parseFloat(liveX.value);
+                const resY = a * valX + b;
+                liveY.value = parseFloat(resY.toFixed(2));
+            } else if (liveY.value !== "") {
+                const valY = parseFloat(liveY.value);
+                if (a !== 0) {
+                    const resX = (valY - b) / a;
+                    liveX.value = parseFloat(resX.toFixed(2));
+                }
+            }
+        }
+
+        // --- GRAPHING ---
         function resizeCanvas() {
             const dpr = window.devicePixelRatio || 1;
             const rect = canvas.getBoundingClientRect();
@@ -410,65 +434,40 @@
             ctx.clearRect(0, 0, w, h);
 
             // Grid
-            ctx.beginPath();
-            ctx.strokeStyle = '#E5E5EA';
-            ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.strokeStyle = '#E5E5EA'; ctx.lineWidth = 1;
             for (let x = cx % scale; x < w; x += scale) { ctx.moveTo(x, 0); ctx.lineTo(x, h); }
             for (let y = cy % scale; y < h; y += scale) { ctx.moveTo(0, y); ctx.lineTo(w, y); }
             ctx.stroke();
 
             // Achsen
-            ctx.beginPath();
-            ctx.strokeStyle = '#3A3A3C';
-            ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.strokeStyle = '#3A3A3C'; ctx.lineWidth = 2;
             ctx.moveTo(0, cy); ctx.lineTo(w, cy);
             ctx.moveTo(cx, 0); ctx.lineTo(cx, h);
             ctx.stroke();
             
-            ctx.font = '12px Arial';
-            ctx.fillStyle = '#3A3A3C';
-            ctx.fillText('x', w - 15, cy + 15);
-            ctx.fillText('y', cx + 10, 15);
+            ctx.font = '12px Arial'; ctx.fillStyle = '#3A3A3C';
+            ctx.fillText('x', w - 15, cy + 15); ctx.fillText('y', cx + 10, 15);
 
             // Gerade
-            ctx.beginPath();
-            ctx.strokeStyle = '#007AFF';
-            ctx.lineWidth = 3;
-            
-            const xMinMath = (0 - cx) / scale;
-            const xMaxMath = (w - cx) / scale;
-            const yStartPix = cy - (a * xMinMath + b) * scale;
-            const yEndPix = cy - (a * xMaxMath + b) * scale;
-
-            ctx.moveTo(0, yStartPix);
-            ctx.lineTo(w, yEndPix);
+            ctx.beginPath(); ctx.strokeStyle = '#007AFF'; ctx.lineWidth = 3;
+            const xMin = (0 - cx) / scale; const xMax = (w - cx) / scale;
+            ctx.moveTo(0, cy - (a * xMin + b) * scale);
+            ctx.lineTo(w, cy - (a * xMax + b) * scale);
             ctx.stroke();
 
-            // Steigungsdreieck (Nur anzeigen wenn im Bildbereich)
+            // Steigungsdreieck
             if (Math.abs(a) > 0) {
-                // Versuche Dreieck bei x=0 zu zeichnen, oder verschiebe es in den sichtbaren Bereich
-                // Einfachheitshalber: Immer bei x=0 ansetzen
-                const startX = 0; 
-                const startY = b;
-                
-                const p1x = cx + startX * scale;
-                const p1y = cy - startY * scale;
-                const p2x = cx + (startX + 1) * scale;
-                const p2y = p1y;
-                const p3x = p2x;
-                const p3y = cy - (startY + a) * scale;
+                const startX = 0; const startY = b;
+                const p1x = cx + startX * scale; const p1y = cy - startY * scale;
+                const p2x = cx + (startX + 1) * scale; const p2y = p1y;
+                const p3x = p2x; const p3y = cy - (startY + a) * scale;
 
-                // Nur zeichnen wenn halbwegs auf Screen
                 if(p1y > -100 && p3y < h + 100) {
-                    ctx.beginPath();
-                    ctx.strokeStyle = '#FF3B30';
-                    ctx.lineWidth = 2;
-                    ctx.setLineDash([5, 3]);
-                    ctx.moveTo(p1x, p1y);
-                    ctx.lineTo(p2x, p2y);
-                    ctx.lineTo(p3x, p3y);
-                    ctx.stroke();
-                    ctx.setLineDash([]);
+                    ctx.beginPath(); ctx.strokeStyle = '#FF3B30'; ctx.lineWidth = 2; ctx.setLineDash([5, 3]);
+                    ctx.moveTo(p1x, p1y); ctx.lineTo(p2x, p2y); ctx.lineTo(p3x, p3y);
+                    ctx.stroke(); ctx.setLineDash([]);
+                    ctx.fillStyle = '#FF3B30'; ctx.font = 'bold 12px sans-serif';
+                    ctx.fillText(a.toFixed(2), p2x + 5, (p2y + p3y)/2 + 3);
                 }
             }
         }
@@ -479,30 +478,22 @@
                 const y = Math.round((a * x + b) * 100) / 100;
                 const row = document.createElement('tr');
                 if (x === 0) row.classList.add('highlight-row');
-                
-                const cellX = document.createElement('td');
-                cellX.textContent = x;
-                const cellY = document.createElement('td');
-                cellY.textContent = y;
-
-                row.appendChild(cellX);
-                row.appendChild(cellY);
+                const cellX = document.createElement('td'); cellX.textContent = x;
+                const cellY = document.createElement('td'); cellY.textContent = y;
+                row.appendChild(cellX); row.appendChild(cellY);
                 tableBody.appendChild(row);
             }
         }
 
-        // Listener
+        // Listeners
         sliderA.addEventListener('input', updateFromSlider);
         sliderB.addEventListener('input', updateFromSlider);
-        
         inputA.addEventListener('input', updateFromInput);
         inputB.addEventListener('input', updateFromInput);
-        
         window.addEventListener('resize', resizeCanvas);
 
-        // Start
         resizeCanvas();
-        updateFromSlider(); // Init mit Default Werten
+        updateFromSlider(); 
 
     </script>
 </body>
